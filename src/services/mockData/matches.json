@@ -1,0 +1,49 @@
+[
+  {
+    "Id": 1,
+    "players": [],
+    "zone": {
+      "center": { "x": 400, "y": 300 },
+      "radius": 350,
+      "shrinkTime": 60,
+      "damagePerSecond": 5
+    },
+    "timeElapsed": 0,
+    "state": "lobby",
+    "maxPlayers": 5,
+    "mapSize": { "width": 800, "height": 600 },
+    "gameMode": "Battle Royale"
+  },
+  {
+    "Id": 2,
+    "players": [],
+    "zone": {
+      "center": { "x": 400, "y": 300 },
+      "radius": 300,
+      "shrinkTime": 45,
+      "damagePerSecond": 8
+    },
+    "timeElapsed": 180,
+    "state": "ended",
+    "maxPlayers": 5,
+    "mapSize": { "width": 800, "height": 600 },
+    "gameMode": "Battle Royale",
+    "winnerId": 1
+  },
+  {
+    "Id": 3,
+    "players": [],
+    "zone": {
+      "center": { "x": 400, "y": 300 },
+      "radius": 250,
+      "shrinkTime": 30,
+      "damagePerSecond": 10
+    },
+    "timeElapsed": 240,
+    "state": "ended",
+    "maxPlayers": 5,
+    "mapSize": { "width": 800, "height": 600 },
+    "gameMode": "Battle Royale",
+    "winnerId": 3
+  }
+]

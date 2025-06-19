@@ -1,0 +1,92 @@
+[
+  {
+    "Id": 1,
+    "name": "Player",
+    "position": { "x": 200, "y": 200 },
+    "health": 100,
+    "armor": 0,
+    "weapon": {
+      "type": "pistol",
+      "damage": 25,
+      "fireRate": 2,
+      "range": 100,
+      "ammoCapacity": 12
+    },
+    "ammo": 12,
+    "kills": 0,
+    "isAlive": true,
+    "isPlayer": true
+  },
+  {
+    "Id": 2,
+    "name": "Enemy Alpha",
+    "position": { "x": 600, "y": 150 },
+    "health": 100,
+    "armor": 0,
+    "weapon": {
+      "type": "rifle",
+      "damage": 35,
+      "fireRate": 4,
+      "range": 150,
+      "ammoCapacity": 30
+    },
+    "ammo": 30,
+    "kills": 0,
+    "isAlive": true,
+    "isPlayer": false
+  },
+  {
+    "Id": 3,
+    "name": "Enemy Bravo",
+    "position": { "x": 500, "y": 450 },
+    "health": 100,
+    "armor": 0,
+    "weapon": {
+      "type": "pistol",
+      "damage": 25,
+      "fireRate": 2,
+      "range": 100,
+      "ammoCapacity": 12
+    },
+    "ammo": 12,
+    "kills": 0,
+    "isAlive": true,
+    "isPlayer": false
+  },
+  {
+    "Id": 4,
+    "name": "Enemy Charlie",
+    "position": { "x": 300, "y": 400 },
+    "health": 100,
+    "armor": 0,
+    "weapon": {
+      "type": "sniper",
+      "damage": 75,
+      "fireRate": 1,
+      "range": 300,
+      "ammoCapacity": 5
+    },
+    "ammo": 5,
+    "kills": 0,
+    "isAlive": true,
+    "isPlayer": false
+  },
+  {
+    "Id": 5,
+    "name": "Enemy Delta",
+    "position": { "x": 150, "y": 350 },
+    "health": 100,
+    "armor": 0,
+    "weapon": {
+      "type": "rifle",
+      "damage": 35,
+      "fireRate": 4,
+      "range": 150,
+      "ammoCapacity": 30
+    },
+    "ammo": 30,
+    "kills": 0,
+    "isAlive": true,
+    "isPlayer": false
+  }
+]

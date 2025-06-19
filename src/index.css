@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import react-toastify CSS */
+@import 'react-toastify/dist/ReactToastify.css';
+
+/* Ensure scrollbars are visible */
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background: #0D0D0D;
+  color: white;
+}
+
+/* Prevent horizontal overflow */
+* {
+  max-width: 100%;
+}
+
+/* Main content areas must allow scroll */
+.main-content {
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* Game canvas styles */
+canvas {
+  display: block;
+  background: #1a1a1a;
+  border: 2px solid #2C5F2D;
+}
+
+/* Custom scrollbar for game elements */
+.game-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #2C5F2D #1A1A1A;
+}
+
+.game-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.game-scrollbar::-webkit-scrollbar-track {
+  background: #1A1A1A;
+}
+
+.game-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #2C5F2D;
+  border-radius: 4px;
+}
+
+/* Zone warning animation */
+@keyframes zone-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+  }
+  50% { 
+    box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+  }
+}
+
+.zone-warning {
+  animation: zone-pulse 1s infinite;
+}
+
+/* Damage indicator */
+.damage-indicator {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  animation: damage-flash 0.3s ease-out;
+}
+
+/* Kill counter animation */
+.kill-counter {
+  animation: kill-scale 0.5s ease-out;
+}
+
+@layer utilities {
+  /* Only use scrollbar-hide for specific UI elements, never main content */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Crosshair styles */
+.crosshair {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #97BC62;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.8;
+}
+
+.crosshair::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: #97BC62;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* HUD styles */
+.hud-element {
+  background: rgba(26, 26, 26, 0.9);
+  border: 1px solid rgba(44, 95, 45, 0.3);
+  backdrop-filter: blur(4px);
+}
+
+/* Weapon icons */
+.weapon-icon {
+  filter: drop-shadow(0 0 4px rgba(151, 188, 98, 0.3));
+}
+
+/* Minimap styles */
+.minimap {
+  background: radial-gradient(circle, rgba(26, 26, 26, 0.95) 0%, rgba(13, 13, 13, 0.95) 100%);
+  border: 2px solid #2C5F2D;
+}
+
+/* Zone circle animation */
+.zone-circle {
+  stroke-dasharray: 2, 4;
+  animation: spin-slow 3s linear infinite;
+}
+
+/* Player dot pulse */
+.player-dot {
+  animation: pulse-slow 2s infinite;
+}

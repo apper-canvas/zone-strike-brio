@@ -1,0 +1,50 @@
+[
+  {
+    "Id": 1,
+    "type": "pistol",
+    "name": "Combat Pistol",
+    "damage": 25,
+    "fireRate": 2,
+    "range": 100,
+    "ammoCapacity": 12,
+    "reloadTime": 1.5,
+    "accuracy": 0.8,
+    "icon": "Target"
+  },
+  {
+    "Id": 2,
+    "type": "rifle",
+    "name": "Assault Rifle",
+    "damage": 35,
+    "fireRate": 4,
+    "range": 150,
+    "ammoCapacity": 30,
+    "reloadTime": 2.0,
+    "accuracy": 0.7,
+    "icon": "Crosshair"
+  },
+  {
+    "Id": 3,
+    "type": "sniper",
+    "name": "Sniper Rifle",
+    "damage": 75,
+    "fireRate": 1,
+    "range": 300,
+    "ammoCapacity": 5,
+    "reloadTime": 3.0,
+    "accuracy": 0.95,
+    "icon": "Scope"
+  },
+  {
+    "Id": 4,
+    "type": "shotgun",
+    "name": "Combat Shotgun",
+    "damage": 60,
+    "fireRate": 1.5,
+    "range": 50,
+    "ammoCapacity": 8,
+    "reloadTime": 2.5,
+    "accuracy": 0.6,
+    "icon": "Zap"
+  }
+]
