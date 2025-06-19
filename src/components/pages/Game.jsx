@@ -26,7 +26,7 @@ const Game = () => {
 
   // Initialize game data
 // Initialize game data
-  useEffect(() => {
+useEffect(() => {
     const initializeGame = async () => {
       try {
         const playersData = await playerService.getAll();
@@ -39,6 +39,7 @@ const Game = () => {
     };
     
     initializeGame();
+  }, []);
 
   const startGame = async () => {
     setLoading(true);
