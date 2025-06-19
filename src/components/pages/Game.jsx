@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-toastify';
-import GameCanvas from '@/components/organisms/GameCanvas';
-import GameHUD from '@/components/organisms/GameHUD';
-import MainMenu from '@/components/organisms/MainMenu';
-import GameOverScreen from '@/components/organisms/GameOverScreen';
-import Minimap from '@/components/organisms/Minimap';
-import { gameService, playerService } from '@/services';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "react-toastify";
+import GameCanvas from "@/components/organisms/GameCanvas";
+import GameHUD from "@/components/organisms/GameHUD";
+import MainMenu from "@/components/organisms/MainMenu";
+import GameOverScreen from "@/components/organisms/GameOverScreen";
+import Minimap from "@/components/organisms/Minimap";
+import { matchService, playerService } from "@/services";
 
 const Game = () => {
   const [gameState, setGameState] = useState('menu'); // menu, playing, gameOver
@@ -25,27 +25,41 @@ const Game = () => {
   const gameTimeRef = useRef(null);
 
   // Initialize game data
+// Initialize game data
   useEffect(() => {
     const initializeGame = async () => {
       try {
         const playersData = await playerService.getAll();
         setPlayers(playersData);
-        setPlayer(playersData.find(p => p.isPlayer) || playersData[0]);
+        setPlayer(playersData.find(p => p.is_player) || playersData[0]);
       } catch (err) {
-        setError(err.message || 'Failed to initialize game');
-        toast.error('Failed to initialize game');
+        console.error('Failed to initialize game:', err);
+        setError(err.message || 'Failed to load game data');
       }
     };
     
     initializeGame();
-  }, []);
 
   const startGame = async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const match = await gameService.startMatch();
+const matchData = {
+        Name: `Match ${Date.now()}`,
+        state: 'active',
+        max_players: 5,
+        game_mode: 'Battle Royale',
+        zone: JSON.stringify({
+          center: { x: 400, y: 300 },
+          radius: 350,
+          shrinkTime: 60,
+          damagePerSecond: 5
+        }),
+        map_size: JSON.stringify({ width: 800, height: 600 }),
+        time_elapsed: 0
+      };
+      const match = await matchService.create(matchData);
       const playersData = await playerService.getAll();
       
       // Reset player states
@@ -63,7 +77,7 @@ const Game = () => {
       
       setCurrentMatch(match);
       setPlayers(resetPlayers);
-      setPlayer(resetPlayers.find(p => p.isPlayer) || resetPlayers[0]);
+setPlayer(resetPlayers.find(p => p.is_player) || resetPlayers[0]);
       setGameState('playing');
       setGameTime(0);
       setZonePhase(1);
@@ -123,8 +137,8 @@ const Game = () => {
 
   const updateAI = () => {
     setPlayers(prevPlayers => {
-      return prevPlayers.map(p => {
-        if (p.isPlayer || !p.isAlive) return p;
+return prevPlayers.map(p => {
+        if (p.is_player || !p.is_alive) return p;
         
         // Simple AI: move towards center and shoot at player
         const centerX = currentMatch?.zone.center.x || 400;
@@ -149,8 +163,8 @@ const Game = () => {
     });
   };
 
-  const checkGameEnd = () => {
-    const alivePlayers = players.filter(p => p.isAlive);
+const checkGameEnd = () => {
+    const alivePlayers = players.filter(p => p.is_alive);
     
     if (alivePlayers.length <= 1) {
       endGame(alivePlayers[0]);
@@ -173,11 +187,17 @@ const Game = () => {
     }
     
     try {
-      await gameService.endMatch(winnerPlayer?.Id);
+if (currentMatch && winnerPlayer) {
+        await matchService.update(currentMatch.Id, {
+          state: 'ended',
+          winner_id: winnerPlayer.Id,
+          time_elapsed: gameTime
+        });
+      }
       setWinner(winnerPlayer);
       setGameState('gameOver');
       
-      if (winnerPlayer?.isPlayer) {
+if (winnerPlayer?.is_player) {
         toast.success('Victory! You are the last one standing!');
       } else {
         toast.error('Game Over! Better luck next time.');
@@ -187,8 +207,8 @@ const Game = () => {
     }
   };
 
-  const handlePlayerMove = useCallback((newPosition) => {
-    if (!player || !player.isAlive) return;
+const handlePlayerMove = useCallback((newPosition) => {
+    if (!player || !player.is_alive) return;
     
     setPlayer(prev => ({
       ...prev,
@@ -200,12 +220,12 @@ const Game = () => {
     ));
   }, [player]);
 
-  const handlePlayerShoot = useCallback((targetPosition) => {
-    if (!player || !player.isAlive || player.ammo <= 0) return;
+const handlePlayerShoot = useCallback((targetPosition) => {
+    if (!player || !player.is_alive || player.ammo <= 0) return;
     
     // Check if hit any enemy
     const hitEnemy = players.find(p => {
-      if (p.isPlayer || !p.isAlive) return false;
+      if (p.is_player || !p.is_alive) return false;
       
       const dx = p.position.x - targetPosition.x;
       const dy = p.position.y - targetPosition.y;
@@ -213,14 +233,13 @@ const Game = () => {
       
       return distance < 30; // Hit radius
     });
-    
     if (hitEnemy) {
       const newHealth = hitEnemy.health - player.weapon.damage;
       
       if (newHealth <= 0) {
         // Enemy killed
-        setPlayers(prev => prev.map(p => 
-          p.Id === hitEnemy.Id ? { ...p, health: 0, isAlive: false } : p
+setPlayers(prev => prev.map(p => 
+          p.Id === hitEnemy.Id ? { ...p, health: 0, is_alive: false } : p
         ));
         setKills(prev => prev + 1);
         setPlayer(prev => ({ ...prev, kills: prev.kills + 1 }));
@@ -241,19 +260,19 @@ const Game = () => {
     }));
   }, [player, players]);
 
-  const handleTakeDamage = useCallback((damage) => {
-    if (!player || !player.isAlive) return;
+const handleTakeDamage = useCallback((damage) => {
+    if (!player || !player.is_alive) return;
     
     const newHealth = Math.max(0, player.health - damage);
     
-    setPlayer(prev => ({
+setPlayer(prev => ({
       ...prev,
       health: newHealth,
-      isAlive: newHealth > 0
+      is_alive: newHealth > 0
     }));
     
-    setPlayers(prev => prev.map(p => 
-      p.Id === player.Id ? { ...p, health: newHealth, isAlive: newHealth > 0 } : p
+setPlayers(prev => prev.map(p => 
+      p.Id === player.Id ? { ...p, health: newHealth, is_alive: newHealth > 0 } : p
     ));
     
     if (newHealth <= 0) {
@@ -263,8 +282,8 @@ const Game = () => {
   }, [player]);
 
   const restartGame = async () => {
-    try {
-      await gameService.resetGame();
+try {
+      // Reset game state locally
       setGameState('menu');
       setCurrentMatch(null);
       setWinner(null);
@@ -342,54 +361,43 @@ const Game = () => {
 
   return (
     <div className="h-screen bg-background overflow-hidden relative">
-      <AnimatePresence mode="wait">
-        {gameState === 'menu' && (
-          <MainMenu
-            key="menu"
-            onStartGame={startGame}
-            loading={loading}
-          />
-        )}
-        
-        {gameState === 'playing' && (
-          <motion.div
+    <AnimatePresence mode="wait">
+        {gameState === "menu" && <MainMenu key="menu" onStartGame={startGame} loading={loading} />}
+        {gameState === "playing" && <motion.div
             key="game"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="h-full relative"
-          >
+            initial={{
+                opacity: 0
+            }}
+            animate={{
+                opacity: 1
+            }}
+            exit={{
+                opacity: 0
+            }}
+            className="h-full relative">
             {/* Game Canvas */}
             <GameCanvas
-              players={players}
-              player={player}
-              match={currentMatch}
-              onPlayerMove={handlePlayerMove}
-              onPlayerShoot={handlePlayerShoot}
-            />
-            
+                players={players}
+                player={player}
+                match={currentMatch}
+                onPlayerMove={handlePlayerMove}
+                onPlayerShoot={handlePlayerShoot} />
             {/* HUD Overlay */}
             <GameHUD
-              player={player}
-              gameTime={gameTime}
-              zonePhase={zonePhase}
-              kills={kills}
-              playersAlive={players.filter(p => p.isAlive).length}
-              onReturnToMenu={returnToMenu}
-            />
-            
+                player={player}
+                gameTime={gameTime}
+                zonePhase={zonePhase}
+                kills={kills}
+                playersAlive={players.filter(p => p.is_alive).length}
+                onReturnToMenu={returnToMenu} />
             {/* Minimap */}
             <Minimap
-              players={players}
-              player={player}
-              zone={currentMatch?.zone}
-              className="absolute top-4 right-4"
-            />
-          </motion.div>
-        )}
-        
-        {gameState === 'gameOver' && (
-          <GameOverScreen
+                players={players}
+                player={player}
+                zone={currentMatch?.zone}
+                className="absolute top-4 right-4" />
+        </motion.div>}
+        {gameState === "gameOver" && <GameOverScreen
             key="gameOver"
             winner={winner}
             player={player}
@@ -397,11 +405,9 @@ const Game = () => {
             kills={kills}
             onPlayAgain={startGame}
             onMainMenu={restartGame}
-            loading={loading}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+            loading={loading} />}
+    </AnimatePresence>
+</div>
   );
 };
 
